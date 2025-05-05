@@ -1,12 +1,14 @@
 import json
 from fastapi import FastAPI, Form, HTTPException, Request, Depends, UploadFile, File,APIRouter
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import create_engine, Column, Integer, String, Text, ForeignKey,JSON
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship, Session
+from sqlalchemy.orm import Session
+from models import User, Epic, Story, Task, Chat, Conversation
+from database import get_db, SessionLocal, init_db
 from passlib.context import CryptContext
 from pydantic_ai import Agent
 from pydantic_ai.models.groq import GroqModel
+from pydantic_ai.providers.groq import GroqProvider
+from dotenv import load_dotenv
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse,StreamingResponse
 from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
@@ -26,80 +28,10 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from PyPDF2 import PdfReader
 
-DATABASE_URL = "mysql+pymysql://root:Dhruvil%402003@localhost/project_management"
-engine = create_engine(DATABASE_URL, pool_recycle=3600, pool_size=10)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
-
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True, index=True)
-    first_name = Column(String(50))
-    last_name = Column(String(50))
-    dob = Column(String(10))
-    country = Column(String(50))
-    country_code = Column(String(10))
-    phone_number = Column(String(20), unique=True, index=True)
-    gender = Column(String(10))
-    email = Column(String(100), unique=True, index=True)
-    password = Column(String(255))
-    profile_image = Column(String(255)) 
+init_db()
 
 # Password hashing setup
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-class Epic(Base):
-    __tablename__ = 'epic'
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=True) 
-    title = Column(String(255), index=True)
-    description = Column(Text)
-    estimation = Column(Integer)
-    stories = relationship('Story', back_populates='epic', cascade='all, delete-orphan')
-    user = relationship('User')
-
-class Story(Base):
-    __tablename__ = 'stories'
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)  # Changed to nullable
-    epic_id = Column(Integer, ForeignKey('epic.id'))
-    title = Column(String(255), index=True)
-    description = Column(Text)
-    estimation = Column(Integer)
-    tasks = relationship('Task', back_populates='story', cascade='all, delete-orphan')
-    epic = relationship('Epic', back_populates='stories')
-    user = relationship('User')
-
-class Task(Base):
-    __tablename__ = 'tasks'
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=True)  # Changed to nullable
-    story_id = Column(Integer, ForeignKey('stories.id'))
-    title = Column(String(255), index=True)
-    description = Column(Text)
-    estimation = Column(Integer)
-    story = relationship('Story', back_populates='tasks')
-    user = relationship('User')
-
-class Chat(Base):
-    __tablename__ = 'chats'
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    chat_name = Column(String(255))
-    created_at = Column(String(20), default=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    conversations = relationship('Conversation', back_populates='chat', cascade='all, delete-orphan')
-
-class Conversation(Base):
-    __tablename__ = 'conversations'
-    id = Column(Integer, primary_key=True, index=True)
-    chat_id = Column(Integer, ForeignKey('chats.id'))
-    user_message = Column(Text)
-    bot_response = Column(Text)
-    structured_data = Column(JSON)
-    created_at = Column(String(20), default=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    chat = relationship('Chat', back_populates='conversations')
-
 class TaskBase(BaseModel):
     title: str
     description: str
@@ -130,7 +62,10 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, session_cookie="mya
 chroma_client = chromadb.Client()
 collection = chroma_client.get_or_create_collection(name="epics_stories_tasks")
 
-model = GroqModel('llama-3.3-70b-versatile', api_key='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')
+load_dotenv()
+api_key = os.getenv("Zesti_API_KEY")
+
+model = GroqModel('llama-3.3-70b-versatile',  provider=GroqProvider(api_key=api_key))
 agent = Agent(model, system_prompt=system_prompt, result_type=AIResponse)
 
 async def generate_formatted_response(answer: str) -> str:
@@ -164,13 +99,12 @@ async def generate_formatted_response(answer: str) -> str:
 
 templates = Jinja2Templates(directory=".")
 
-def get_db():
-    db = SessionLocal()
-    return db
-
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+app.mount("/CSS", StaticFiles(directory="CSS"), name="css")
+app.mount("/JS", StaticFiles(directory="JS"), name="js")
 
 @app.get("/file-answer.html", response_class=HTMLResponse)
 async def file_answer_page(request: Request):
