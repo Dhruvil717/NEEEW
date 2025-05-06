@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="CSS/update_profile.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Update Profile</h1>
+        <form id="updateProfileForm" action="/update-profile" method="post">
+            <input type="text" name="first_name" placeholder="Updated First Name" value="{{ user.first_name }}" required><br>
+            <input type="text" name="last_name" placeholder="Updated Last Name" value="{{ user.last_name }}" required><br>
+            <div class="dropdown-container">
+                <input type="text" id="countrySearch" placeholder="Select Country" value="{{ user.country }}" readonly>
+                <div id="countryDropdown" class="dropdown">
+                    <input type="text" id="searchInput" placeholder="Search country...">
+                    <div id="dropdownOptions"></div>
+                </div>
+                <input type="hidden" name="country" id="country">
+            </div>
+            <input type="text" name="postal_code" id="postalCode" placeholder="Postal Code" value="{{ user.postal_code }}" readonly><br>
+
+            <input type="text" name="phone_number" placeholder="Updated Phone Number" value="{{ user.phone_number }}" required><br>
+            <button type="submit">Save Changes</button>
+        </form>
+        <div class="password-section">
+            <h2>Change Password</h2>
+            <form id="changePasswordForm" action="/update-password" method="post">
+                <input type="date" name="dob_verify" id="dob_verify" placeholder="Enter your DOB for verification" required><br>
+                <button type="button" id="verifyDobButton">Verify DOB</button>
+                <div id="passwordFields" class="hidden">
+                    <input type="password" name="new_password" placeholder="New Password" required><br>
+                    <input type="password" name="confirm_password" placeholder="Confirm New Password" required><br>
+                    <button type="submit">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="JS/update_profile.js"></script>
+</body>
+</html>

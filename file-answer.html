@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Answer</title>
+    <link rel="stylesheet" href="CSS/file-answer.css">
+</head>
+<body>
+    <div class="top-right-buttons">
+        {% if request.session.user %}
+            <img id="profileLogo" src="{{ request.session.user.profile_image if request.session.user.profile_image else 'https://via.placeholder.com/100' }}" alt="Profile Logo" class="profile-logo" onclick="toggleDropdown()">
+            <div id="dropdown" style="display: none;">
+                <button onclick="showLogoutConfirmation()">Logout</button>
+                <button onclick="showChangeLogoModal()">Change Logo</button>
+            </div>
+        {% else %}
+            <button onclick="window.location.href='/onlylogin'">Login</button>
+            <button onclick="window.location.href='/signup'">Sign Up</button>
+        {% endif %}
+    </div>
+    
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <p>Are you sure you want to logout?</p>
+            <button onclick="logout()">Yes</button>
+            <button class="cancel" onclick="closeModal()">No</button>
+        </div>
+    </div>
+    
+    <div id="changeLogoModal" class="modal">
+        <div class="modal-content">
+            <p>Upload and crop your profile picture:</p>
+            <input type="file" id="logoUpload" accept="image/*">
+            <div id="imagePreview" style="margin: 20px 0; display: none;">
+                <img id="cropperImage" src="#" alt="Preview" style="max-width: 100%;">
+            </div>
+            <button id="uploadButton" style="display: none;" onclick="uploadLogo()">Upload</button>
+            <button class="cancel" onclick="closeChangeLogoModal()">Cancel</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>Answer from Uploaded File</h1>
+        
+        <div id="formattedOutput" class="formatted-output"></div>
+        
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Estimation (Hours)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        
+        <h3>Ask a follow-up question:</h3>
+        <textarea id="followUpQuestion" rows="5" placeholder="Type your follow-up question here..."></textarea>
+        <button onclick="submitFollowUp()">Submit </button>
+    </div>
+
+    <script src="JS/file-answer.js"></script>
+</body>
+</html>

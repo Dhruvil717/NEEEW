@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation</title>
+    <link rel="stylesheet" href="CSS/conversation.css">
+</head>
+<body>
+    <div class="settings-icon" onclick="toggleSidebar()">&#9776</div>
+
+    <div class="sidebar" id="sidebar">
+        <span class="close-btn" onclick="toggleSidebar()">×</span>
+        <button onclick="window.location.href='/base'">Home</button>
+        <button class="logout" onclick="showLogoutConfirmation()">Logout</button>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search messages..." oninput="filterMessages()">
+            <button class="search-icon" onclick="filterMessages()">&#128269;</button> 
+        </div>
+       
+        <div class="search-results" id="searchResults"></div>
+        <div class="download-container">
+            <button onclick="toggleDownloadDropdown()">Download</button>
+            <div id="downloadDropdown" class="dropdown">
+                <button onclick="downloadConversation('pdf')">Download as PDF</button>
+                <button onclick="downloadConversation('word')">Download as Word</button>
+            </div>
+        </div>
+        <div class="font-style-container">
+            <button onclick="toggleFontDropdown()">Font Style</button>
+            <div id="fontDropdown" class="dropdown" style="display: none;">
+                <button class="font-arial" onclick="changeFontStyle('Arial, sans-serif')">Arial</button>
+                <button class="font-verdana" onclick="changeFontStyle('Verdana, sans-serif')">Verdana</button>
+                <button class="font-helvetica" onclick="changeFontStyle('Helvetica, sans-serif')">Helvetica</button>
+                <button class="font-tahoma" onclick="changeFontStyle('Tahoma, sans-serif')">Tahoma</button>
+                <button class="font-georgia" onclick="changeFontStyle('Georgia, serif')">Georgia</button>
+                <button class="font-times" onclick="changeFontStyle('Times New Roman, serif')">Times New Roman</button>
+                <button class="font-courier" onclick="changeFontStyle('Courier New, monospace')">Courier New</button>
+                <button class="font-comic" onclick="changeFontStyle('Comic Sans MS, cursive')">Comic Sans MS</button>
+                <button class="font-impact" onclick="changeFontStyle('Impact, sans-serif')">Impact</button>
+                <button class="font-lucida" onclick="changeFontStyle('Lucida Console, monospace')">Lucida Console</button>
+            </div>    
+        </div>
+    </div>
+  
+    <div class="main-content" id="mainContent">
+        <div class="header-container">
+            <h1 id="chatNameHeader">Chat Name</h1>
+        </div>
+        <div class="conversation-container" id="conversationContainer">
+        </div>
+        <div class="input-container">
+            <textarea id="questionInput" placeholder="Type your question..."></textarea>
+            <button onclick="submitQuestion()">Send</button>
+        </div>
+    </div>
+
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <p>Do you really want to logout?</p>
+            <button onclick="logout()">Yes</button>
+            <button class="cancel" onclick="closeModal()">No</button>
+        </div>
+    </div>
+
+    <script src="JS/conversation.js"></script>
+</body>
+</html>

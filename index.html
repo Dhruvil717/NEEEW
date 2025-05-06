@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>EPIC GENERATOR</title>
+    <link rel="stylesheet" href="CSS/index.css">
+</head>
+<body>
+    <div class="top-right-buttons">
+        <button onclick="window.location.href='/onlylogin'">Login</button>
+        <button onclick="window.location.href='/signup'">Sign Up</button>
+    </div>
+
+    <div class="container" id="questionContainer">
+        <h1>PASTE YOUR RESPONSE HERE</h1>
+        <form id="questionForm" action="/submit" method="post" onsubmit="return validateForm()">
+            <label for="question"></label><br>
+            <textarea id="question" name="question" rows="5" cols="30" required></textarea><br>
+            <span class="error-message" id="error-message">Please enter a valid question.</span><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div class="login-popup" id="loginPopup">
+        <span class="close-btn" onclick="closeLoginPopup()">×</span>
+        <h1>Welcome to ZEstimator App</h1>
+        <form id="loginForm" action="/onlylogin" method="POST" onsubmit="return validateLoginForm()">
+            <h2>Login</h2>
+            <input type="email" name="email" id="email" placeholder="Email" required><br>
+            <input type="password" name="password" id="password" placeholder="Password" required><br>
+            <div id="login-error-message" class="error"></div>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="/signup">Sign up here</a></p>
+    </div>
+
+    <script src="JS/index.js"></script>
+</body>
+</html>

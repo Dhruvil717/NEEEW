@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <title>EPIC GENERATOR</title>
+        <link rel="stylesheet" href="CSS/base.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    </head>
+    <body>
+        <div class="chat-button" onclick="openSidebar()">&#9776</div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Chats</h2>
+                <button class="close-btn" onclick="closeSidebar()">×</button>
+            </div>
+            <div class="sidebar-content">
+                <button onclick="showNewChatModal()">New Chat</button>
+                <ul id="chatList">
+                    
+                </ul>
+            </div>
+        </div>
+ 
+        <div style="position: absolute; top: 10px; right: 10px;">
+            <img id="profileLogo" src="{{ request.session.user.profile_image if request.session.user.profile_image else 'data:image/png;base64,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' }}"  alt="Profile Logo" class="profile-logo" onclick="toggleDropdown()">
+            <div id="dropdown" style="display: none;">
+                <button onclick="window.location.href='/update-profile'">Update Profile</button>
+                <button onclick="showChangeLogoModal()">Change Logo</button>
+                <button onclick="showLogoutConfirmation()">Logout</button>
+            </div>
+        </div>
+    
+        <div class="container">
+            <h1>PASTE YOUR RESPONSE HERE</h1>
+        
+            <form id="questionForm" action="/submit" method="post" onsubmit="return validateForm()">
+                <label for="question"></label><br>
+                <div style="position: relative;">
+                    <textarea id="question" name="question" rows="5" cols="30" required></textarea>
+                    <label for="fileUpload" class="attach-button" title="Attach file">
+                        <span>📎</span>
+                        <input type="file" id="fileUpload" name="file" style="display: none;" 
+                               accept=".pdf,.txt,.doc,.docx" onchange="handleFileSelection()">
+                    </label>
+                </div>
+                <span class="error-message" id="error-message">Please enter a valid question.</span><br>
+ 
+                <div id="filePreview" style="margin-top: 10px; display: none;">
+                    <div style="display: flex; align-items: center; gap: 10px; background: #f5f5f5; padding: 8px; border-radius: 5px;">
+                        <span id="fileNameDisplay" style="font-weight: bold; color: #4CAF50;"></span>
+                        <button type="button" onclick="removeFile()" style="background: none; border: none; color: #f44336; cursor: pointer;" title="Remove file">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="submit">Submit Text</button>
+                    <button type="button" onclick="submitFile()" id="fileSubmitBtn" disabled>Submit File</button>
+                </div>
+            </form>
+
+            <div id="fileAnswer" style="margin-top: 20px;"></div>
+        </div>
+        <div id="similarFilesResults" style="margin-top: 20px; display: none;">
+            <h3>Similar Files:</h3>
+            <div id="similarFilesList"></div>
+        </div>
+    
+        <div id="logoutModal" class="modal">
+            <div class="modal-content">
+                <p>Are you sure you want to logout?</p>
+                <button onclick="logout()">Yes</button>
+                <button class="cancel" onclick="closeModal()">No</button>
+            </div>
+        </div>
+
+        <div id="changeLogoModal" class="modal">
+            <div class="modal-content">
+                <p>Upload and crop your profile picture:</p>
+                <input type="file" id="logoUpload" accept="image/*">
+                <div id="imagePreview" style="margin: 20px 0; display: none;">
+                    <img id="cropperImage" src="#" alt="Preview" style="max-width: 100%;">
+                </div>
+                <button onclick="uploadLogo()">Upload</button>
+                <button class="cancel" onclick="closeChangeLogoModal()">Cancel</button>
+            </div>
+        </div>
+
+        <div id="newChatModal" class="modal">
+            <div class="modal-content">
+                <p>Enter a name for your new chat:</p>
+                <input type="text" id="chatNameInput" placeholder="Chat Name">
+                <button onclick="createNewChat()">Create</button>
+                <button class="cancel" onclick="closeNewChatModal()">Cancel</button>
+            </div>
+        </div>
+
+        <div id="updateChatModal" class="modal">
+            <div class="modal-content">
+                <p>Enter a new name for the chat:</p>
+                <input type="text" id="newChatNameInput" placeholder="New Chat Name">
+                <button onclick="updateChatName()">Update</button>
+                <button class="cancel" onclick="closeUpdateChatModal()">Cancel</button>
+            </div>
+        </div>
+
+        <div id="confirmationModal" class="confirmation-modal">
+            <p>Do you really want to delete this chat?</p>
+            <button class="confirm" onclick="confirmDelete()">Yes</button>
+            <button class="cancel" onclick="closeConfirmationModal()">No</button>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+        <script src="JS/base.js"></script>
+    </body>
+</html>
